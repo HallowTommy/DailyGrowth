@@ -37,7 +37,13 @@ workflows:
             CODE_SIGNING_ALLOWED=NO \
             ARCHS=arm64 \
             ONLY_ACTIVE_ARCH=YES \
-            | tee /tmp/xcodebuild_logs/simulator_build.log
+            2>&1 | tee /tmp/xcodebuild_logs/simulator_build.log
+
+      - name: Show build errors with context
+        script: |
+          echo "=== SWIFT / XCODE ERRORS WITH CONTEXT ==="
+          grep -n -C 3 " error:" /tmp/xcodebuild_logs/simulator_build.log || true
+          echo "=== END ==="
 
       - name: Collect simulator .app
         script: |
